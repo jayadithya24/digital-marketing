@@ -28,7 +28,7 @@ export default function Contact() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/contact", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -39,7 +39,6 @@ export default function Contact() {
       if (data.success) {
         setIsSubmitted(true);
 
-        // Reset form fields
         setFormData({
           name: '',
           email: '',
@@ -49,7 +48,6 @@ export default function Contact() {
           message: '',
         });
 
-        // Hide success message after 3 seconds
         setTimeout(() => setIsSubmitted(false), 3000);
       } else {
         alert("Something went wrong. Please try again.");
