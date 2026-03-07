@@ -120,10 +120,7 @@ export default function Portfolio() {
                     <TrendingUp className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
                     <p className="text-sm text-green-800 font-medium">{item.results}</p>
                   </div>
-                  <button className="text-blue-600 font-semibold flex items-center gap-2 hover:gap-3 transition-all">
-                    View Case Study
-                    <ExternalLink size={16} />
-                  </button>
+                 
                 </div>
               </div>
             ))}
@@ -139,9 +136,7 @@ export default function Portfolio() {
           <p className="text-xl text-gray-600 mb-8">
             Let's create remarkable results for your business together
           </p>
-          <button className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-            Start Your Project
-          </button>
+          
         </div>
       </section>
     </div>

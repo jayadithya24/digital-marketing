@@ -45,7 +45,7 @@ function App() {
       <main className="pt-16">
         {renderPage()}
       </main>
-      <Footer />
+     <Footer onNavigate={setCurrentPage} />
     </div>
   );
 }
