@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Mail, Loader } from 'lucide-react';
 
 export default function NewsletterSignup() {
+  const NEWSLETTER_API_URL = '/api/newsletter';
+
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -11,7 +13,7 @@ export default function NewsletterSignup() {
     setStatus('loading');
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/newsletter`, {
+      const response = await fetch(NEWSLETTER_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

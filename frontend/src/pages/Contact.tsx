@@ -2,6 +2,8 @@ import { useState, FormEvent } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 
 export default function Contact() {
+  const CONTACT_API_URL = '/api/contact';
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,17 +29,22 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
 
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 30000);
+
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
+      const res = await fetch(CONTACT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        signal: controller.signal,
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
-      if (data.success) {
+      if (res.ok && data.success) {
         setIsSubmitted(true);
+        alert(data.message || "Message sent successfully!");
 
         setFormData({
           name: '',
@@ -50,13 +57,18 @@ export default function Contact() {
 
         setTimeout(() => setIsSubmitted(false), 3000);
       } else {
-        alert("Something went wrong. Please try again.");
+        alert(data.error || data.message || "Something went wrong. Please try again.");
       }
-    } catch (error) {
-      alert("Server error. Please try again later.");
+    } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        alert("Request timed out. Please check your backend server and try again.");
+      } else {
+        alert("Server error. Please try again later.");
+      }
+    } finally {
+      window.clearTimeout(timeoutId);
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -92,8 +104,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Email</h3>
-                    <p className="text-gray-600">contact@digitalexpert.com</p>
-                    <p className="text-gray-600">support@digitalexpert.com</p>
+                    <p className="text-gray-600">jaysalian24@gmail.com</p>
                   </div>
                 </div>
 
@@ -104,8 +115,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Phone</h3>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
-                    <p className="text-gray-600">Mon-Fri, 9AM-6PM EST</p>
+                    <p className="text-gray-600">+91 9876543210</p>
+                    <p className="text-gray-600">Mon-Fri, 9AM-6PM IST</p>
                   </div>
                 </div>
 
@@ -117,7 +128,7 @@ export default function Contact() {
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Office</h3>
                     <p className="text-gray-600">123 Marketing Avenue</p>
-                    <p className="text-gray-600">New York, NY 10001</p>
+                    <p className="text-gray-600">Udupi, Karnataka</p>
                   </div>
                 </div>
               </div>
@@ -197,7 +208,7 @@ export default function Contact() {
                         value={formData.phone}
                         onChange={handleChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                        placeholder="+1 (555) 123-4567"
+                        placeholder="+91 9876543210"
                       />
                     </div>
 
