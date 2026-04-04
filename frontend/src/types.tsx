@@ -1,4 +1,4 @@
-export type PageType = 'home' | 'about' | 'services' | 'portfolio' | 'contact';
+export type PageType = 'home' | 'about' | 'services' | 'portfolio' | 'contact' | 'auth';
 
 export interface Service {
   title: string;

@@ -14,6 +14,8 @@ export default function Contact() {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [statusType, setStatusType] = useState<'success' | 'error' | ''>('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (
@@ -28,6 +30,8 @@ export default function Contact() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setStatusMessage('');
+    setStatusType('');
 
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 30000);
@@ -44,7 +48,8 @@ export default function Contact() {
 
       if (res.ok && data.success) {
         setIsSubmitted(true);
-        alert(data.message || "Message sent successfully!");
+        setStatusMessage(data.message || 'Message sent successfully!');
+        setStatusType('success');
 
         setFormData({
           name: '',
@@ -55,16 +60,22 @@ export default function Contact() {
           message: '',
         });
 
-        setTimeout(() => setIsSubmitted(false), 3000);
+        window.setTimeout(() => {
+          setIsSubmitted(false);
+          setStatusMessage('');
+          setStatusType('');
+        }, 3000);
       } else {
-        alert(data.error || data.message || "Something went wrong. Please try again.");
+        setStatusMessage(data.error || data.message || 'Something went wrong. Please try again.');
+        setStatusType('error');
       }
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {
-        alert("Request timed out. Please check your backend server and try again.");
+        setStatusMessage('Request timed out. Please check your backend server and try again.');
       } else {
-        alert("Server error. Please try again later.");
+        setStatusMessage('Server error. Please try again later.');
       }
+      setStatusType('error');
     } finally {
       window.clearTimeout(timeoutId);
       setLoading(false);
@@ -170,6 +181,17 @@ export default function Contact() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    {statusMessage ? (
+                      <div
+                        className={`rounded-lg border px-4 py-3 text-sm ${
+                          statusType === 'success'
+                            ? 'border-green-200 bg-green-50 text-green-800'
+                            : 'border-red-200 bg-red-50 text-red-700'
+                        }`}
+                      >
+                        {statusMessage}
+                      </div>
+                    ) : null}
 
                     {/* Name */}
                     <div>

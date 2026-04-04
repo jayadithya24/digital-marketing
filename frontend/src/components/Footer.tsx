@@ -72,6 +72,15 @@ export default function Footer({ onNavigate }: FooterProps) {
                 </button>
               </li>
 
+              <li>
+                <button
+                  onClick={() => onNavigate("auth")}
+                  className="hover:text-white transition-colors"
+                >
+                  Login / Register
+                </button>
+              </li>
+
             </ul>
           </div>
 

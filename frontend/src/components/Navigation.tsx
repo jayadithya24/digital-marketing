@@ -5,9 +5,11 @@ import { PageType } from '../types';
 interface NavigationProps {
   currentPage: PageType;
   onNavigate: (page: PageType) => void;
+  onLogout: () => void;
+  isAuthenticated: boolean;
 }
 
-export default function Navigation({ currentPage, onNavigate }: NavigationProps) {
+export default function Navigation({ currentPage, onNavigate, onLogout, isAuthenticated }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems: { label: string; page: PageType }[] = [
@@ -30,37 +32,47 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
         <div className="flex justify-between items-center h-16">
           <div
             className="text-2xl font-bold text-blue-600 cursor-pointer"
-            onClick={() => handleNavigate('home')}
+            onClick={() => handleNavigate(isAuthenticated ? 'home' : 'auth')}
           >
             Digital<span className="text-gray-800">Expert</span>
           </div>
 
-          <div className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
+          {isAuthenticated ? (
+            <div className="hidden md:flex space-x-8">
+              {navItems.map((item) => (
+                <button
+                  key={item.page}
+                  onClick={() => handleNavigate(item.page)}
+                  className={`text-sm font-medium transition-colors ${
+                    currentPage === item.page
+                      ? 'text-blue-600'
+                      : 'text-gray-600 hover:text-blue-600'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
               <button
-                key={item.page}
-                onClick={() => handleNavigate(item.page)}
-                className={`text-sm font-medium transition-colors ${
-                  currentPage === item.page
-                    ? 'text-blue-600'
-                    : 'text-gray-600 hover:text-blue-600'
-                }`}
+                onClick={onLogout}
+                className="text-sm font-semibold text-gray-600 transition-colors hover:text-blue-600"
               >
-                {item.label}
+                Logout
               </button>
-            ))}
-          </div>
+            </div>
+          ) : null}
 
-          <button
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {isAuthenticated ? (
+            <button
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          ) : null}
         </div>
       </div>
 
-      {isMenuOpen && (
+      {isAuthenticated && isMenuOpen && (
         <div className="md:hidden bg-white border-t">
           <div className="px-4 py-2 space-y-1">
             {navItems.map((item) => (
@@ -76,6 +88,12 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
                 {item.label}
               </button>
             ))}
+            <button
+              onClick={onLogout}
+              className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+            >
+              Logout
+            </button>
           </div>
         </div>
       )}
